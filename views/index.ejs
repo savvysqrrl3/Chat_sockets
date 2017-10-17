@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>Group Chat</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    	<script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    	<script type ="text/javascript">
+        $(document).ready(function(){
+        	var socket  = io.connect();
+        
+        	var person = prompt("Please enter your name.");	
+        	console.log(person)
+        	
+        	while(person == false || person == null){
+        		person = prompt("Please enter your name.");	
+        	}
+        	socket.emit('load_div');
+
+	    	$('#new_message').submit(function(e){
+	    		e.preventDefault();
+	    		message = person + ": " + $('#content').val();
+	    		// console.log(message)
+                socket.emit('message_posted', message);
+
+            })
+            socket.on("new_message", function(all_messages){
+            	$('#all_messages').html("");
+            	for(var i = 0; i < all_messages.length; i++){
+            		$('#all_messages').prepend(`<p> ${all_messages[i]} </p>`)
+            	}
+            })
+	        	
+		});
+        </script>
+	</head>
+	<body>
+	    <h3>Conversation Board </h3>
+	    <p>
+	    <div id="all_messages" style="border-width: 2px; border-style: solid; border-color: blue; overflow: scroll; height: 200px; width: 700px;">
+	    	
+	    </div>
+	    <p>
+	    <form id="new_message">
+	    	<textarea rows="10" cols="75" name="comment" id="content">  </textarea>
+			<p>
+			<input type="submit" name="submit" value="Send">
+			</p>
+	    </form>
+	   	</p>
+	</body>
+</html>
